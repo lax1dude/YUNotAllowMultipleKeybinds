@@ -1,0 +1,9 @@
+/*
+!/src/
+!.gitignore
+!gradlew*
+!/gradle/
+!build.gradle
+!settings.gradle
+!LICENSE*
+!README*
