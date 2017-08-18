@@ -25,7 +25,12 @@ public class KeybindASMTransformer implements IClassTransformer {
 			ClassNode nodeler = new ClassNode();
 			ClassReader readler = new ClassReader(basicClass);
 			readler.accept(nodeler, 0);
-			t.transform(nodeler);
+			try {
+				t.transform(nodeler, !name.equals(transformedName));
+			}catch(Throwable t2) {
+				TransformLogger.warn("Could not inject bytecode: "+transformedName);
+				TransformLogger.info("Deal with it. (the game might be broken tho :\\ )");
+			}
 			ClassWriter writeler = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 			nodeler.accept(writeler);
 			TransformLogger.info("Injected bytecode: "+transformedName);
