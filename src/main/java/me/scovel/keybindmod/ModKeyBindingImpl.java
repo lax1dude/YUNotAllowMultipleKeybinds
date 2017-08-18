@@ -31,14 +31,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.IntHashMap;
 
 public class ModKeyBindingImpl {
-	private static final List keybindArray = new ArrayList();
-	private static final IntHashMap hash = new IntHashMap();
-	private static final Set keybindSet = new HashSet();
+	private static final List<ModKeyBindingImpl> keybindArray = new ArrayList();
+	private static final Set<String> keybindSet = new HashSet();
 	private final String keyDescription;
 	private final int keyCodeDefault;
 	private final String keyCategory;
@@ -48,41 +49,39 @@ public class ModKeyBindingImpl {
 
 	public static void onTick(int p_74507_0_) {
 		if (p_74507_0_ != 0) {
-			ModKeyBindingImpl ModKeyBindingImpl = (ModKeyBindingImpl) hash.lookup(p_74507_0_);
+			Iterator<ModKeyBindingImpl> iterator = keybindArray.iterator();
 
-			if (ModKeyBindingImpl != null) {
-				++ModKeyBindingImpl.pressTime;
+			while (iterator.hasNext()) {
+				ModKeyBindingImpl k = iterator.next();
+				if(k.keyCode == p_74507_0_) {
+					++k.pressTime;
+				}
 			}
 		}
 	}
 
 	public static void setKeyBindState(int p_74510_0_, boolean p_74510_1_) {
 		if (p_74510_0_ != 0) {
-			ModKeyBindingImpl ModKeyBindingImpl = (ModKeyBindingImpl) hash.lookup(p_74510_0_);
+			Iterator<ModKeyBindingImpl> iterator = keybindArray.iterator();
 
-			if (ModKeyBindingImpl != null) {
-				ModKeyBindingImpl.pressed = p_74510_1_;
+			while (iterator.hasNext()) {
+				ModKeyBindingImpl k = iterator.next();
+				if(k.keyCode == p_74510_0_) {
+					k.pressed = p_74510_1_;
+				}
 			}
 		}
 	}
 
 	public static void unPressAllKeys() {
-		Iterator iterator = keybindArray.iterator();
+		Iterator<ModKeyBindingImpl> iterator = keybindArray.iterator();
 
 		while (iterator.hasNext()) {
-			ModKeyBindingImpl ModKeyBindingImpl = (ModKeyBindingImpl) iterator.next();
-			ModKeyBindingImpl.unpressKey();
+			iterator.next().unpressKey();
 		}
 	}
 
 	public static void resetKeyBindingArrayAndHash() {
-		hash.clearMap();
-		Iterator iterator = keybindArray.iterator();
-
-		while (iterator.hasNext()) {
-			ModKeyBindingImpl ModKeyBindingImpl = (ModKeyBindingImpl) iterator.next();
-			hash.addKey(ModKeyBindingImpl.keyCode, ModKeyBindingImpl);
-		}
 	}
 
 	public static Set getKeybinds() {
@@ -95,7 +94,6 @@ public class ModKeyBindingImpl {
 		this.keyCodeDefault = p_i45001_2_;
 		this.keyCategory = p_i45001_3_;
 		keybindArray.add(this);
-		hash.addKey(p_i45001_2_, this);
 		keybindSet.add(p_i45001_3_);
 	}
 
