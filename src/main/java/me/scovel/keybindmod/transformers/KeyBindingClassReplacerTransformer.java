@@ -60,6 +60,7 @@ public class KeyBindingClassReplacerTransformer implements ITransformer {
 		final String getKeyCodeDefault  = obfuscated ? "h" : "getKeyCodeDefault";
 		final String getKeyCode         = obfuscated ? "i" : "getKeyCode";
 		final String setKeyCode         = obfuscated ? "b" : "setKeyCode";
+		final String compareTo          = obfuscated ? "a" : "compareTo";
 		final String getKeybinds        = obfuscated ? "c" : "getKeybinds"; //static
 		
 		clazz.fields.add(new FieldNode(Opcodes.ASM5, Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, "deevile", "L"+reImpl+";", null, null));
@@ -135,12 +136,12 @@ public class KeyBindingClassReplacerTransformer implements ITransformer {
 				methodler.instructions.add(new VarInsnNode   (Opcodes.ILOAD,         1));
 				methodler.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, reImpl, "setKeyCode", "(I)V"));
 				methodler.instructions.add(new InsnNode      (Opcodes.RETURN));
-			}else if(methodler.name.equals("compareTo") && methodler.desc.equals("(Lnet/minecraft/client/settings/KeyBinding;)I")){
+			}else if(methodler.name.equals(compareTo) && methodler.desc.equals("(L"+iYee+";)I")){
 				methodler.instructions.clear();
 				methodler.instructions.add(new VarInsnNode   (Opcodes.ALOAD,         0));
 				methodler.instructions.add(new FieldInsnNode (Opcodes.GETFIELD,      iYee, "deevile", "L"+reImpl+";"));
 				methodler.instructions.add(new VarInsnNode   (Opcodes.ALOAD,         1));
-				methodler.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, reImpl, "compareTo", "(Lnet/minecraft/client/settings/KeyBinding;)I"));
+				methodler.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, reImpl, "compareTo", "(L"+iYee+";)I"));
 				methodler.instructions.add(new InsnNode      (Opcodes.IRETURN));
 			}else if(methodler.name.equals(getKeybinds) && methodler.desc.equals("()Ljava/util/Set;")){
 				methodler.instructions.clear();

@@ -136,14 +136,19 @@ public class ModKeyBindingImpl {
 	}
 
 	public int compareTo(KeyBinding p_compareTo_1_) {
-		int i = I18n.format(this.keyCategory, new Object[0])
-				.compareTo(I18n.format(p_compareTo_1_.getKeyCategory(), new Object[0]));
+		try {
+			int i = I18n.format(this.keyCategory, new Object[0])
+					.compareTo(I18n.format(p_compareTo_1_.getKeyCategory(), new Object[0]));
+	
+			if (i == 0) {
+				i = I18n.format(this.keyDescription, new Object[0])
+						.compareTo(I18n.format(p_compareTo_1_.getKeyDescription(), new Object[0]));
+			}
 
-		if (i == 0) {
-			i = I18n.format(this.keyDescription, new Object[0])
-					.compareTo(I18n.format(p_compareTo_1_.getKeyDescription(), new Object[0]));
+			return i;
+		}catch(NullPointerException e) {
+			e.printStackTrace();
+			return 0;
 		}
-
-		return i;
 	}
 }

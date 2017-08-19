@@ -25,9 +25,13 @@
 
 package me.scovel.keybindmod.transformers;
 
+import java.util.ArrayList;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -40,15 +44,31 @@ public class GuiKeyBindingListTransformer implements ITransformer {
 	@Override public void transform(String dee, String yee, ClassNode clazz, boolean obfuscated) {
 		final String methodName = obfuscated ? "a" : "drawEntry";
 		
+		final String tessellator = obfuscated ? "bmh" : "net/minecraft/client/renderer/Tessellator";
+		
+		final String redName = obfuscated ? "m" : "RED";
+		
 		for(MethodNode methodler : clazz.methods){
-			if(methodler.name.equals(methodName) && methodler.desc.equals("(IIIIILnet/minecraft/client/renderer/Tessellator;IIZ)V")){
-				int line = 0;
-				for(AbstractInsnNode instruction : methodler.instructions.toArray()){
-					if(instruction instanceof LineNumberNode) {
-						line = ((LineNumberNode)instruction).line;
-					}
-					if(line >= 167 && line <= 170 && !(instruction instanceof LabelNode)){
-						methodler.instructions.remove(instruction);
+			if(methodler.name.equals(methodName) && methodler.desc.equals("(IIIIIL"+tessellator+";IIZ)V")){
+				AbstractInsnNode inst = null;
+				for(AbstractInsnNode node : methodler.instructions.toArray()) {
+					if((node instanceof FieldInsnNode) && ((FieldInsnNode)node).getOpcode() == Opcodes.GETSTATIC && ((FieldInsnNode)node).name.equals(redName)) {
+						ArrayList<AbstractInsnNode> arr = new ArrayList();
+						inst = node.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious().getPrevious();
+						while(true) {
+							AbstractInsnNode node2 = inst.getNext();
+							if(!(inst instanceof LabelNode)) {
+								arr.add(inst);
+							}
+							if((inst instanceof FieldInsnNode) && ((FieldInsnNode)inst).getOpcode() == Opcodes.PUTFIELD) {
+								break;
+							}
+							inst = node2;
+						}
+						for(AbstractInsnNode n : arr) {
+							methodler.instructions.remove(n);
+						}
+						break;
 					}
 				}
 				break;
